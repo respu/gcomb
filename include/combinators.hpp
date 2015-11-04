@@ -110,7 +110,7 @@ namespace detail
             return detail::call (f, tup);
         };
 
-        return generator<U> ([f,g] (void) { return g (call); } );
+        return generator<U> ([call,g] (void) { return g (call); } );
     }
 
 
