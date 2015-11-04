@@ -110,8 +110,29 @@ namespace detail
     }
 
 
+    // choose between two possible values of
+    // the same type.
+    //
+    template <typename T, typename Branch>
+    generator<T> braid (generator<T> const& a,
+                        generator<T> const& b,
+                        Branch&& branch)
+    {
+        return generator<T>
+            ([a,b,branch] (void) -> T
+            {
+                return branch (a(), b());
+            });
+    }
+
+
+    // choose between two possible values of
+    // different types (this returns an alebraic type).
+    //
     template <typename T, typename U, typename Branch,
-        typename A = algebraic::algebraic<T, U>>
+        typename A = algebraic::algebraic<T, U>,
+        typename = typename std::enable_if
+            <not std::is_same<T,U>::value>::type>
     generator<A> braid (generator<T> const& t,
                         generator<U> const& u,
                         Branch&& branch)
