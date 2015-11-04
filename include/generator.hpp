@@ -24,10 +24,13 @@ namespace detail
     // with no explicit continuation.
     //
     template <typename T>
-    inline constexpr auto ident (T&& t) noexcept -> decltype(std::forward<T>(t))
+    struct ident 
     {
-        return std::forward<T>(t);
-    }
+        T operator() (T const& t) const noexcept
+        {
+            return t;
+        }
+    };
 } // namespace detail
 
     // this is used to "bottom out" a generator,
@@ -77,13 +80,18 @@ namespace detail
         //      then so too will this be noexcept.
         //
         template <typename K>
-        auto operator() (K && k = detail::ident<T>) const
+        auto operator() (K && k) const
             noexcept
                 (noexcept(gen()) &&
                 noexcept(std::forward<K>(k) (gen())))
             -> decltype (std::forward<K>(k) (gen()))
         {
             return std::forward<K>(k) (gen());
+        }
+
+        T operator() (void) const
+        {
+            return gen ();
         }
     };
 
