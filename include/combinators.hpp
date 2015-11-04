@@ -105,7 +105,7 @@ namespace detail
         typename U = typename std::result_of<F(T, Ts...)>::type>
     generator<U> bind (F&& f, generator<std::tuple<T,Ts...>> const& g) noexcept
     {
-        auto call = [f](std::tuple<T,Ts...> const& tup)
+        auto const call = [f](std::tuple<T,Ts...> const& tup)
         {
             return detail::call (f, tup);
         };
@@ -121,6 +121,17 @@ namespace detail
         noexcept
     {
         return bind (f, braid (g, gs...));
+    }
+
+
+    template <typename T>
+    algebraic_generator<T, bot_t> bound (generator<T> const& g, std::size_t n)
+    {
+        return algebraic_generator<T, bot_t>
+            ([g,n] (void) mutable -> algebraic::algebraic<T, bot_t>
+            {
+                return n ? (--n, g ()) : bot_t {};
+            });
     }
 } // namspace gcomb
 
