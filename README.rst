@@ -16,7 +16,7 @@ What is this?
 -------------
 
 Algebraic types are discriminated unions of types ``T_1, ..., T_n``,
-initialized once with a single fixed type Ti, which is invariant through
+initialized once with a single fixed type ``T_i``, which is invariant through
 the lifetime of the object. Moreover, such a type supports a never-empty
 guarantee; that is, expressions of the form
 
