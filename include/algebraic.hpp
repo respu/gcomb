@@ -375,6 +375,63 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
+        operator U (void) &
+            { return *addressof<U_>(); }
+
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<recursive<U_>, T>::value,
+                     std::is_same<recursive<U_>, Ts>::value...)>::type,
+            bool /*no template redeclaration*/ = bool{}>
+        operator U (void) &
+            { return **addressof<recursive<U>>(); }
+
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<U_, T>::value,
+                     std::is_same<U_, Ts>::value...)>::type>
+        operator U (void) &&
+            { return std::move (*addressof<U>()); }
+ 
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<recursive<U_>, T>::value,
+                     std::is_same<recursive<U_>, Ts>::value...)>::type,
+            bool /*no template redeclaration*/ = bool{}>
+        operator U (void) &&
+            { return std::move (**addressof<recursive<U>>()); } 
+
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<U_, T>::value,
+                     std::is_same<U_, Ts>::value...)>::type>
+        operator U (void) const&
+            { return *addressof<U>(); }
+  
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<recursive<U_>, T>::value,
+                     std::is_same<recursive<U_>, Ts>::value...)>::type,
+            bool /*no template redeclaration*/ = bool{}>
+        operator U (void) const&
+            { return **addressof<recursive<U>>(); }
+
+
+        template <typename U, typename U_ = typename std::decay<U>::type,
+            typename = typename
+                std::enable_if<detail::any_true
+                    (std::is_same<U_, T>::value,
+                     std::is_same<U_, Ts>::value...)>::type>
         U&  operator* (void) &
             { return value<U>(); }
    
