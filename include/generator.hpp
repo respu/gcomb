@@ -85,12 +85,6 @@ namespace detail
         {
             return std::forward<K>(k) (gen());
         }
-
-        T && operator () (void) const
-            noexcept (noexcept(std::move(std::declval<T>())))
-        {
-            return this->operator() (std::move<T>);
-        }
     };
 
     template <typename T>
