@@ -73,7 +73,7 @@ namespace detail
         //      clang has no such issues ... such is life when writing
         //      portable code.
         //
-        //      In any case, if identh gen() and k(...) calls are noexcept,
+        //      In any case, if both gen() and k(...) calls are noexcept,
         //      then so too will this be noexcept.
         //
         template <typename K>
