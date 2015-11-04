@@ -36,43 +36,43 @@ namespace detail
         ~algebraic_internal_storage (void) noexcept = default;
 
         template <typename U> 
-        inline constexpr U&       value (void) &
+        U& value (void) &
             { return *addressof<U>(); }
 
         template <typename U>
-        inline constexpr U&&      value (void) &&
+        U&& value (void) &&
             { return std::move (*addressof<U>()); }
 
         template <typename U>
-        inline constexpr U const& value (void) const&
+        U const& value (void) const&
             { return *addressof<U>(); }
        
         template <typename U>
-        inline constexpr U&       operator* (void) &
+        U& operator* (void) &
             { return value<U>(); }
         
         template <typename U>
-        inline constexpr U&&      operator* (void) &&
+        U&& operator* (void) &&
             { return value<U>(); }
         
         template <typename U>
-        inline constexpr U const& operator* (void) const&
+        U const& operator* (void) const&
             { return value<U>(); }
         
         template <typename U>
-        inline constexpr U*       addressof (void) noexcept
+        U* addressof (void) noexcept
             { return reinterpret_cast<U*> (data); }
 
         template <typename U>
-        inline constexpr U const* addressof (void) const noexcept
+        U const* addressof (void) const noexcept
             { return reinterpret_cast<U const*> (data); }
 
         template <typename U>
-        inline constexpr U*       operator& (void) noexcept
+        U* operator& (void) noexcept
             { return addressof<U>(); }
 
         template <typename U>
-        inline constexpr U const* operator& (void) const noexcept
+        U const* operator& (void) const noexcept
             { return addressof<U>(); }
     private: 
         static constexpr auto align = std::max ({alignof(T), alignof(Ts)...});
@@ -148,44 +148,44 @@ namespace detail
             std::swap (data, other.data);
         }
 
-        inline constexpr T&       value (void) &
+        T& value (void) &
             { return *addressof(); }
 
-        inline constexpr T&&      value (void) &&
+        T&& value (void) &&
             { return std::move (*addressof()); }
 
-        inline constexpr T const& value (void) const&
+        T const& value (void) const&
             { return *addressof(); }
 
 
-        inline constexpr T&       operator* (void) &
+        T& operator* (void) &
             { return value(); }
 
-        inline constexpr T&&      operator* (void) &&
+        T&& operator* (void) &&
             { return value(); }
 
-        inline constexpr T const& operator* (void) const&
+        T const& operator* (void) const&
             { return value(); }
 
 
-        inline constexpr T*       addressof (void) noexcept
+        T* addressof (void) noexcept
             { return reinterpret_cast<T*> (data.get()); }
 
-        inline constexpr T const* addressof (void) const noexcept
+        T const* addressof (void) const noexcept
             { return reinterpret_cast<T const*> (data.get()); }
 
 
-        inline constexpr T*       operator& (void) noexcept
+        T* operator& (void) noexcept
             { return addressof(); }
 
-        inline constexpr T const* operator& (void) const noexcept
+        T const* operator& (void) const noexcept
             { return addressof(); }
 
 
-        inline constexpr T* ptr (void) noexcept
+        T* ptr (void) noexcept
             { return data.get(); }
 
-        inline constexpr T const* ptr (void) const noexcept
+        T const* ptr (void) const noexcept
             { return data.get(); }
 
     private:
@@ -303,7 +303,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U_ & value (void) &
+        U_ & value (void) &
             { return *addressof<U_>(); }
 
 
@@ -313,7 +313,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U& value (void) &
+        U& value (void) &
             { return **addressof<recursive<U>>(); }
 
 
@@ -322,7 +322,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U&& value (void) &&
+        U&& value (void) &&
             { return std::move (*addressof<U>()); }
  
 
@@ -332,7 +332,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U&& value (void) &&
+        U&& value (void) &&
             { return std::move (**addressof<recursive<U>>()); } 
 
 
@@ -341,7 +341,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U const& value (void) const&
+        U const& value (void) const&
             { return *addressof<U>(); }
   
 
@@ -351,7 +351,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U const& value (void) const&
+        U const& value (void) const&
             { return **addressof<recursive<U>>(); }
 
 
@@ -360,7 +360,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U&  operator* (void) &
+        U&  operator* (void) &
             { return value<U>(); }
    
 
@@ -370,7 +370,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U&  operator* (void) &
+        U&  operator* (void) &
             { return value<recursive<U>>(); }
 
 
@@ -379,7 +379,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U&& operator* (void) &&
+        U&& operator* (void) &&
             { return value<U>(); }
     
 
@@ -389,7 +389,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U&& operator* (void) &&
+        U&& operator* (void) &&
             { return value<recursive<U>>(); }
 
 
@@ -398,7 +398,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U const& operator* (void) const&
+        U const& operator* (void) const&
             { return value<U>(); }
      
 
@@ -408,7 +408,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U const& operator* (void) const&
+        U const& operator* (void) const&
             { return value<recursive<U>>(); }
 
 
@@ -417,7 +417,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U* addressof (void) noexcept
+        U* addressof (void) noexcept
         {
             return reinterpret_cast<U*> (storage.template addressof<U>());
         }
@@ -429,7 +429,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U* addressof (void) noexcept
+        U* addressof (void) noexcept
         {
             return reinterpret_cast<U*>
                 (storage.template addressof<recursive<U>>()->addressof());
@@ -441,7 +441,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U const* addressof (void) const noexcept
+        U const* addressof (void) const noexcept
         {
             return reinterpret_cast<U const*>
                 (storage.template addressof<U>());
@@ -454,7 +454,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U const* addressof (void) const noexcept
+        U const* addressof (void) const noexcept
         {
             return reinterpret_cast<U const*>
                 (storage.template addressof<recursive<U>>()->addressof());
@@ -466,7 +466,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U* operator& (void) noexcept
+        U* operator& (void) noexcept
             { return addressof<U>(); }
  
 
@@ -476,7 +476,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U* operator& (void) noexcept
+        U* operator& (void) noexcept
             { return addressof<recursive<U>>(); }
 
 
@@ -485,7 +485,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        inline constexpr U const* operator& (void) const noexcept
+        U const* operator& (void) const noexcept
             { return addressof<U>(); }
   
 
@@ -495,7 +495,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        inline constexpr U const* operator& (void) const noexcept
+        U const* operator& (void) const noexcept
             { return addressof<recursive<U>>(); }
 
 
@@ -504,7 +504,7 @@ namespace detail
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
                      std::is_same<U_, Ts>::value...)>::type>
-        constexpr algebraic<T, Ts...> & operator= (U && u)
+        algebraic<T, Ts...> & operator= (U && u)
             noexcept (std::is_nothrow_move_assignable<U>::value)
         {
             auto const address =
@@ -521,7 +521,7 @@ namespace detail
                     (std::is_same<recursive<U_>, T>::value,
                      std::is_same<recursive<U_>, Ts>::value...)>::type,
             bool /*no template redeclaration*/ = bool{}>
-        constexpr algebraic<T, Ts...> & operator= (U && u)
+        algebraic<T, Ts...> & operator= (U && u)
             noexcept (std::is_nothrow_move_assignable<U>::value)
         {
             auto const address =
@@ -551,7 +551,7 @@ namespace detail
 
         template <std::size_t N,
             typename = typename std::enable_if<N < ntypes::value>::type>
-        using type = std::tuple_element_t<N, std::tuple<T, Ts...>>;
+        using type = typename std::tuple_element<N, std::tuple<T, Ts...>>::type;
 
         template <typename U,
             typename = typename std::enable_if
