@@ -9,13 +9,13 @@
 #define ALGEBRAIC_HPP
 
 //
-// Algebraic types are discriminated unions of types T1, T2, ..., TN,
+// Algebraic types are discriminated unions of types T_1, ..., T_n,
 // initialized once with a single fixed type Ti, which is invariant through
 // the lifetime of the object. Moreover, such a type supports a never-empty
 // guarantee; that is, expressions of the form
-//      fnk::algebraic<T1,T2,...,TN> a;
+//      algebraic<T_1, ..., T_n> a;
 // are not supported. Rather, they must be initialized at declaration with an
-// expression of type U, implicitly convertible to one of T1, ..., TN.
+// expression of type U, implicitly convertible to one of T_1, ..., T_n.
 //
 // note:
 //      This is NOT the same as a boost::variant or std::optional.
