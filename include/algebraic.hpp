@@ -33,7 +33,11 @@ namespace detail
     struct algebraic_internal_storage
     {
     public:
-        ~algebraic_internal_storage (void) noexcept = default;
+        template <typename U>
+        void swap (algebraic_internal_storage & other) noexcept
+        {
+            std::swap (addressof<U>(), other.addressof<U>());
+        }
 
         template <typename U> 
         U& value (void) &
@@ -46,11 +50,11 @@ namespace detail
         template <typename U>
         U const& value (void) const&
             { return *addressof<U>(); }
-       
+
         template <typename U>
         U& operator* (void) &
             { return value<U>(); }
-        
+
         template <typename U>
         U&& operator* (void) &&
             { return value<U>(); }
@@ -244,6 +248,14 @@ namespace detail
         algebraic & operator= (algebraic<T, Ts...> const&)      = default;
 
         ~algebraic (void) noexcept = default;
+
+        void swap (algebraic & other) noexcept
+        {
+            assert (tindex == other.tindex
+                    && "cannot swap objects of differing types");
+
+            storage.swap (other.storage);
+        }
 
         template <typename U>
         static algebraic<T, Ts...> emplace (U && u)
