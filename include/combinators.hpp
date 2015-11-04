@@ -79,11 +79,48 @@ namespace detail
 } // namespace detail
 
     template <typename T, typename ... Ts>
-    generator<std::tuple<T, Ts...>> braid
+    generator<std::tuple<T, Ts...>> tie
         (generator<T> const& g, generator<Ts> const& ... gs) noexcept
     {
         return generator<std::tuple<T, Ts...>>
             ([g,gs...] (void) { return std::make_tuple (g(), gs()...); } );
+    }
+
+
+    template <typename T, typename U, typename Branch,
+        typename A = algebraic::algebraic<T, U>>
+    generator<A> seq (generator<T> const& t,
+                      generator<U> const& u,
+                      Branch&& branch)
+    {
+        return generator<A>
+            ([t,u,branch] (void) -> A
+            {
+                static bool ts = true;
+                if (ts) {
+                    auto const val = t ();
+                    if (not branch (val))
+                        return val;
+                    else
+                        ts = false;
+                }
+
+                return u ();
+            });
+    }
+
+
+    template <typename T, typename U, typename Branch,
+        typename A = algebraic::algebraic<T, U>>
+    generator<A> braid (generator<T> const& t,
+                        generator<U> const& u,
+                        Branch&& branch)
+    {
+        return generator<A>
+            ([t,u,branch] (void) -> A
+            {
+                return branch (t(), u());
+            });
     }
 
 
@@ -127,10 +164,12 @@ namespace detail
     template <typename T>
     algebraic_generator<T, bot_t> bound (generator<T> const& g, std::size_t n)
     {
+        using A = algebraic::algebraic<T, bot_t>;
+
         return algebraic_generator<T, bot_t>
-            ([g,n] (void) mutable -> algebraic::algebraic<T, bot_t>
+            ([g,n] (void) mutable ->  A
             {
-                return n ? (--n, g ()) : bot_t {};
+                return n ? (--n, A (g())) : A (bot_t{});
             });
     }
 } // namspace gcomb
