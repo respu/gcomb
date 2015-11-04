@@ -211,30 +211,33 @@ namespace detail
                 (sizeof(T) == 0, "no default construction of algebraic type");
         }
 
-        template <typename U>
+
+        template <typename U, typename W = typename std::decay<U>::type,
+            typename = typename std::enable_if
+                <detail::any_true
+                    (std::is_same<W, T>::value,
+                     std::is_same<W, Ts>::value...)>::type>
         algebraic (U && u)
-            : tindex (detail::type_to_index<U, T, Ts...>::value)
+            : tindex (detail::type_to_index<W, T, Ts...>::value)
         {
-            static_assert
-            (detail::any_true
-                (std::is_same<typename std::remove_cv<U>::type, T>::value,
-                 std::is_same<typename std::remove_cv<U>::type, Ts>::value...),
-            "no possible conversion");
-
             auto const address =
-                reinterpret_cast<void*> (storage.template addressof<U>());
+                reinterpret_cast<void*> (storage.template addressof<W>());
 
-            new (address) U (std::forward<U>(u));
+            new (address) W (std::forward<U>(u));
         }
 
-        template <typename U, bool /*no template redeclaration*/ = bool{}>
+
+        template <typename U, typename W = typename std::decay<U>::type,
+             typename = typename std::enable_if
+                <detail::any_true
+                    (std::is_same<recursive<W>, T>::value,
+                     std::is_same<recursive<W>, Ts>::value...)>::type,
+            bool /*no template redeclaration*/ = bool{}>
         algebraic (U && u)
             : tindex
                 (detail::type_to_index
-                <recursive<typename std::remove_cv<U>::type>, T, Ts...>::value)
+                <recursive<typename std::decay<U>::type>, T, Ts...>::value)
         {
-            using W = typename std::remove_cv<U>::type;
-
             auto const address =
                 reinterpret_cast<void*> (storage.template addressof<W>());
 
@@ -310,7 +313,7 @@ namespace detail
         }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -319,7 +322,7 @@ namespace detail
             { return *addressof<U_>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -329,7 +332,7 @@ namespace detail
             { return **addressof<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -338,7 +341,7 @@ namespace detail
             { return std::move (*addressof<U>()); }
  
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -348,7 +351,7 @@ namespace detail
             { return std::move (**addressof<recursive<U>>()); } 
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -357,7 +360,7 @@ namespace detail
             { return *addressof<U>(); }
   
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -367,7 +370,7 @@ namespace detail
             { return **addressof<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -376,7 +379,7 @@ namespace detail
             { return value<U>(); }
    
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -386,7 +389,7 @@ namespace detail
             { return value<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -395,7 +398,7 @@ namespace detail
             { return value<U>(); }
     
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -405,7 +408,7 @@ namespace detail
             { return value<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -414,7 +417,7 @@ namespace detail
             { return value<U>(); }
      
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -424,7 +427,7 @@ namespace detail
             { return value<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -435,7 +438,7 @@ namespace detail
         }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -448,7 +451,7 @@ namespace detail
         }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -460,7 +463,7 @@ namespace detail
         }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -473,7 +476,7 @@ namespace detail
         }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -482,7 +485,7 @@ namespace detail
             { return addressof<U>(); }
  
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -492,7 +495,7 @@ namespace detail
             { return addressof<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -501,7 +504,7 @@ namespace detail
             { return addressof<U>(); }
   
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
@@ -511,7 +514,7 @@ namespace detail
             { return addressof<recursive<U>>(); }
 
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<U_, T>::value,
@@ -527,7 +530,7 @@ namespace detail
         }
    
 
-        template <typename U, typename U_ = typename std::remove_cv<U>::type,
+        template <typename U, typename U_ = typename std::decay<U>::type,
             typename = typename
                 std::enable_if<detail::any_true
                     (std::is_same<recursive<U_>, T>::value,
