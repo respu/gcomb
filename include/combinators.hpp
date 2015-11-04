@@ -97,7 +97,7 @@ namespace detail
             <detail::is_good_call<F, T>::value>::type>
     generator<U> bind (F&& f, generator<T> const& g) noexcept
     {
-        return generator<U> ([g,f] (void) { return g (f); });
+        return generator<U> ([f,g] (void) { return g (f); });
     }
 
 
@@ -110,7 +110,7 @@ namespace detail
             return detail::call (f, tup);
         };
 
-        return generator<U> ([g,f] (void) { return g (call); } );
+        return generator<U> ([f,g] (void) { return g (call); } );
     }
 
 
