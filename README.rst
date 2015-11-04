@@ -3,7 +3,7 @@ algebraic
 =========
 
 This is a simple reference implementation for fixed type at instantiation
-algebraic and recursive algebraic data types for C++11/14.
+algebraic and recursive algebraic data types in C++11/14.
 
 It differs from ``std::optional`` and ``boost::variant`` in that
 an object of type ``algebraic<T_1,...,T_n>`` has a fixed instantiation
