@@ -14,28 +14,31 @@
 #define GCOMB_GENERATOR_HPP
 
 #include <functional>
-#include <type_traits>
 #include <ostream>
 
 namespace gcomb
 {
 namespace detail
 {
-    // This function is used to "bottom out" a generator
-    // continuation; thus creating a "pure" generator.
+    // This function is used to create a "pure" generator,
+    // with no explicit continuation.
     //
     template <typename T>
-    inline constexpr auto bot (T&& t) noexcept -> decltype(std::forward<T>(t))
+    inline constexpr auto ident (T&& t) noexcept -> decltype(std::forward<T>(t))
     {
         return std::forward<T>(t);
     }
 } // namespace detail
 
+    // this is used to "bottom out" a generator,
+    // signaling there are no more values to produce.
+    struct bot_t {};
+
     template <typename T>
     class generator
     {
     private:
-        mutable std::function<T (void)> gen;
+        std::function<T (void)> gen;
     public:
         using value_type      = T;
         using reference       = T &;
@@ -70,11 +73,11 @@ namespace detail
         //      clang has no such issues ... such is life when writing
         //      portable code.
         //
-        //      In any case, if both gen() and k(...) calls are noexcept,
+        //      In any case, if identh gen() and k(...) calls are noexcept,
         //      then so too will this be noexcept.
         //
         template <typename K>
-        auto operator() (K && k = detail::bot<T>) const
+        auto operator() (K && k = detail::ident<T>) const
             noexcept
                 (noexcept(gen()) &&
                 noexcept(std::forward<K>(k) (gen())))
@@ -132,10 +135,61 @@ namespace detail
 //
 
     // a constant value generator
+    //
     template <typename T>
     generator<T> pure (T && t)
     {
         return generator<T> ([t] (void) { return t; });
+    }
+
+
+    template <typename T, typename ... Ts,
+        typename = typename std::enable_if<sizeof...(Ts) >= 1>::type>
+    generator<std::tuple<T, Ts...>> pure (T&& t, Ts&& ... ts)
+    {
+        return generator<std::tuple<T, Ts...>>
+            ([t,ts...] (void)
+            {
+                static auto const tup = std::make_tuple (t, ts...);
+                return tup;
+            });
+    }
+
+
+    // an identially `bot` generator;
+    // in essence produces no values
+    // whatsoever.
+    //
+    auto const bot = pure (bot_t{});
+
+
+    // sum counter
+    template <typename T,
+        typename = typename std::enable_if<std::is_arithmetic<T>::value>>
+    generator<T> count (T start = (T) 0, T step = (T) 1)
+    {
+        return generator<T>
+            ([start,step] (void) mutable -> T
+            {
+                auto result = start;
+                start += step;
+                return result;
+            });
+    }
+
+
+    // multaplicative
+    template <typename T,
+        typename = typename std::enable_if<std::is_arithmetic<T>::value>>
+    generator<T> prod (T start, T factor)
+    {
+        return generator<T>
+            ([start,factor] (void) mutable -> T
+            {
+                auto result = start;
+                start *= factor;
+                return result;
+            });
     }
 } // namespace gcomb
 
